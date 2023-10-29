@@ -1,0 +1,15 @@
+{
+  "name": "jtbdatapack:adventurerhouse",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "jtbdatapack:adventurerhousestructure",
+        "projection": "rigid",
+        "processors": "minecraft:empty"
+      }
+    }
+  ]
+}
