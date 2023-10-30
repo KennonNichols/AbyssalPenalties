@@ -18,7 +18,7 @@ public class ModItems {
 
 
     public static final RegistryObject<Item> GAS_MASK = ITEMS.register("gas_mask",
-            () -> new ArmorItem(ModArmorMaterials.HAZMAT, ArmorItem.Type.HELMET, new Item.Properties()));
+            () -> new GasMask(ModArmorMaterials.HAZMAT, ArmorItem.Type.HELMET, new Item.Properties()));
 
 
 

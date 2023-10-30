@@ -17,6 +17,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.thathitmann.madeforabyss.item.ModItems;
+import net.thathitmann.madeforabyss.networking.ModMessages;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -55,6 +56,11 @@ public class MadeForAbyss
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
+
+
+        ModMessages.register();
+
+
         // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
 

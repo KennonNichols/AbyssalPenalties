@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "madeforabyss:item/gas_mask",
+    "layer1": "madeforabyss:item/gas_mask"
+  }
+}
