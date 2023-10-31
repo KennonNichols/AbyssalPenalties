@@ -2,11 +2,13 @@ package net.thathitmann.madeforabyss.item;
 
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import net.thathitmann.madeforabyss.MadeForAbyss;
+import net.thathitmann.madeforabyss.entity.ModEntities;
 
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MadeForAbyss.MOD_ID);
@@ -21,6 +23,10 @@ public class ModItems {
     //Gas Mask
     public static final RegistryObject<Item> GAS_MASK = ITEMS.register("gas_mask",
             () -> new GasMask(ModArmorMaterials.HAZMAT, ArmorItem.Type.HELMET, new Item.Properties()));
+    //Golem Spawn Egg
+    public static final RegistryObject<Item> GOLEM_SPAWN_EGG = ITEMS.register("golem_spawn_egg",
+            () -> new ForgeSpawnEggItem(ModEntities.DEEPSLATE_GOLEM, 0x515151, 0x3e3d43,
+                    new Item.Properties()));
 
 
 

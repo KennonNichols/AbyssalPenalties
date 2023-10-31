@@ -1,6 +1,7 @@
 package net.thathitmann.madeforabyss;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -20,9 +21,13 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.thathitmann.madeforabyss.entity.ModEntities;
+import net.thathitmann.madeforabyss.entity.client.DeepslateGolemRenderer;
 import net.thathitmann.madeforabyss.item.ModItems;
 import net.thathitmann.madeforabyss.networking.ModMessages;
 import org.slf4j.Logger;
+
+import javax.swing.text.html.parser.Entity;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(MadeForAbyss.MOD_ID)
@@ -42,6 +47,8 @@ public class MadeForAbyss
 
         //Register items
         ModItems.register(modEventBus);
+        //Register items
+        ModEntities.register(modEventBus);
 
 
 
@@ -85,6 +92,9 @@ public class MadeForAbyss
         else if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(ModItems.GAS_MASK);
         }
+        else if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+            event.accept(ModItems.GOLEM_SPAWN_EGG);
+        }
     }
 
     public static final TagKey<Item> toxinImmunityTag = ItemTags.create(new ResourceLocation("madeforabyss", "toxinimmunity"));
@@ -105,6 +115,7 @@ public class MadeForAbyss
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
+            EntityRenderers.register(ModEntities.DEEPSLATE_GOLEM.get(), DeepslateGolemRenderer::new);
         }
     }
 }
