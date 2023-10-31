@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S S",
+    "I I",
+    "CIC"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_nugget"
+    },
+    "S": {
+      "item": "minecraft:string"
+    },
+    "C": {
+      "item": "madeforabyss:charcoal_filter"
+    }
+  },
+  "result": {
+    "item": "madeforabyss:gas_mask"
+  }
+}

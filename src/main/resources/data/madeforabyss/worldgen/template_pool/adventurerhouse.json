@@ -1,12 +1,12 @@
 {
-  "name": "jtbdatapack:adventurerhouse",
+  "name": "madeforabyss:adventurerhouse",
   "fallback": "minecraft:empty",
   "elements": [
     {
       "weight": 1,
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "jtbdatapack:adventurerhousestructure",
+        "location": "madeforabyss:adventurerhousestructure",
         "projection": "rigid",
         "processors": "minecraft:empty"
       }

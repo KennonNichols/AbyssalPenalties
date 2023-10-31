@@ -14,9 +14,11 @@ public class ModItems {
 
     //Charcoal Filter
     public static final RegistryObject<Item> CHARCOAL_FILTER = ITEMS.register("charcoal_filter",
-            () -> new Item(new Item.Properties()));
-
-
+            () -> new CharcoalFilter(new Item.Properties()));
+    //Toxin Amulet
+    public static final RegistryObject<Item> TOXIN_AMULET = ITEMS.register("toxin_amulet",
+            () -> new ToxinAmulet(new Item.Properties()));
+    //Gas Mask
     public static final RegistryObject<Item> GAS_MASK = ITEMS.register("gas_mask",
             () -> new GasMask(ModArmorMaterials.HAZMAT, ArmorItem.Type.HELMET, new Item.Properties()));
 

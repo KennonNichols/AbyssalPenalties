@@ -4,7 +4,7 @@
   "step": "surface_structures",
   "spawn_overrides": {},
   "terrain_adaptation": "bury",
-  "start_pool": "jtbdatapack:adventurerhouse",
+  "start_pool": "madeforabyss:adventurerhouse",
   "size": 1,
   "start_height": {
     "absolute": -250
