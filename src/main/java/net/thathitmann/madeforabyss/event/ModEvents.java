@@ -1,15 +1,19 @@
 package net.thathitmann.madeforabyss.event;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.monster.MagmaCube;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
@@ -23,6 +27,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.thathitmann.madeforabyss.MadeForAbyss;
+import net.thathitmann.madeforabyss.entity.ModEntities;
 import net.thathitmann.madeforabyss.networking.ModMessages;
 import net.thathitmann.madeforabyss.networking.packet.SanityDataSyncS2CPacket;
 import net.thathitmann.madeforabyss.sanity.PlayerSanity;
@@ -86,6 +91,19 @@ public class ModEvents {
     }
 
 
+
+    @SubscribeEvent
+    public static void onBlockMined(BlockEvent.BreakEvent event) {
+        BlockPos pos = event.getPos();
+        if (pos.getY() <= -300) {
+            if (event.getState().getBlock() == Blocks.DEEPSLATE && event.getPlayer().getRandom().nextFloat() <= (1/128)) {
+                ModEntities.DEEPSLATE_GOLEM.get().spawn((ServerLevel)event.getLevel(), event.getPos(), MobSpawnType.EVENT);
+            }
+            else if (event.getState().getBlock() == Blocks.NETHERRACK && event.getPlayer().getRandom().nextFloat() <= (1/64)) {
+                EntityType.MAGMA_CUBE.spawn((ServerLevel)event.getLevel(), event.getPos(), MobSpawnType.EVENT);
+            }
+        }
+    }
 
 
 

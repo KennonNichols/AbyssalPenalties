@@ -16,10 +16,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class DeepslateGolemEntity extends Monster {
+
     public DeepslateGolemEntity(EntityType<? extends Monster> pEntityType, Level pLevel) {
         super(pEntityType, pLevel);
     }
-
 
 
     public final static AnimationState walkAnimationState = new AnimationState();
@@ -56,6 +56,8 @@ public class DeepslateGolemEntity extends Monster {
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.2D, false));
         this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1D));
     }
+
+
 
     public static AttributeSupplier.Builder createAttributes() {
         return Monster.createMonsterAttributes().add(Attributes.MAX_HEALTH, 25.0D)

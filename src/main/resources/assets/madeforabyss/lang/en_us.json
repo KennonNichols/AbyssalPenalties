@@ -1,5 +1,6 @@
 {
   "item.madeforabyss.charcoal_filter": "Charcoal Filter",
   "item.madeforabyss.gas_mask": "Gas Mask",
-  "item.madeforabyss.toxin_amulet": "Toxin Amulet"
+  "item.madeforabyss.toxin_amulet": "Toxin Amulet",
+  "entity.madeforabyss.deepslate_golem": "Deepslate Golem"
 }

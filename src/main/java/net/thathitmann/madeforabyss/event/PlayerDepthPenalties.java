@@ -178,7 +178,7 @@ public abstract class PlayerDepthPenalties {
             });
     }
     private static void belowMinus50DepthPenalty(Player player) {
-        if (player.getRandom().nextFloat() <= 0.01f) {
+        if (player.getRandom().nextFloat() <= 0.001f) {
             player.causeFoodExhaustion(1);
         }
     }
