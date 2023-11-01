@@ -20,6 +20,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -27,6 +28,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.thathitmann.madeforabyss.MadeForAbyss;
+import net.thathitmann.madeforabyss.MobNetherizingRegistry;
 import net.thathitmann.madeforabyss.entity.ModEntities;
 import net.thathitmann.madeforabyss.networking.ModMessages;
 import net.thathitmann.madeforabyss.networking.packet.SanityDataSyncS2CPacket;
@@ -96,10 +98,10 @@ public class ModEvents {
     public static void onBlockMined(BlockEvent.BreakEvent event) {
         BlockPos pos = event.getPos();
         if (pos.getY() <= -300) {
-            if (event.getState().getBlock() == Blocks.DEEPSLATE && event.getPlayer().getRandom().nextFloat() <= (1/128)) {
+            if (event.getState().getBlock() == Blocks.DEEPSLATE && event.getPlayer().getRandom().nextFloat() <= 0.0078125) {
                 ModEntities.DEEPSLATE_GOLEM.get().spawn((ServerLevel)event.getLevel(), event.getPos(), MobSpawnType.EVENT);
             }
-            else if (event.getState().getBlock() == Blocks.NETHERRACK && event.getPlayer().getRandom().nextFloat() <= (1/64)) {
+            else if (event.getState().getBlock() == Blocks.NETHERRACK && event.getPlayer().getRandom().nextFloat() <= 0.015625) {
                 EntityType.MAGMA_CUBE.spawn((ServerLevel)event.getLevel(), event.getPos(), MobSpawnType.EVENT);
             }
         }
@@ -146,18 +148,20 @@ public class ModEvents {
 
 
 
-
-
-    /*
+    //Nether mobs spawn below -400
     @SubscribeEvent
-    public static void onBlockPlaced(BlockEvent.EntityPlaceEvent event) {
-        if (event.getPos().getY() <= -450 && event.getPlacedBlock().getBlock() == Blocks.WATER) {
-            event.setCanceled(true);
+    public static void onMobSpawn(MobSpawnEvent.FinalizeSpawn event) {
+        if (event.getY() <= -400) {
+            EntityType type = event.getEntity().getType();
+            if (MobNetherizingRegistry.isMobNetherizable(type)) {
+                event.setSpawnCancelled(true);
+                EntityType newType = MobNetherizingRegistry.getNetherizedMob(type);
+                if (newType != null) {
+                    newType.spawn((ServerLevel) event.getLevel(), event.getEntity().blockPosition(), MobSpawnType.EVENT);
+                }
+            }
         }
-    }*/
-
-
-
+    }
 
 
 

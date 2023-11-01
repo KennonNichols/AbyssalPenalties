@@ -2,15 +2,23 @@ package net.thathitmann.madeforabyss.event;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.ServerStatsCounter;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +33,10 @@ import net.thathitmann.madeforabyss.networking.ModMessages;
 import net.thathitmann.madeforabyss.networking.packet.SanityDataSyncS2CPacket;
 import net.thathitmann.madeforabyss.sanity.PlayerSanity;
 import net.thathitmann.madeforabyss.sanity.PlayerSanityProvider;
+import net.thathitmann.madeforabyss.sanity.SanityPunishments;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Random;
 
 import static net.thathitmann.madeforabyss.MadeForAbyss.toxinImmunityTag;
 
@@ -57,6 +68,11 @@ public abstract class PlayerDepthPenalties {
         else if (block == Blocks.WATER_CAULDRON) {
             level.setBlock(pos, Blocks.CAULDRON.defaultBlockState(), 3);
         }
+    }
+
+
+    private static Boolean isBlockPosWithinRange(BlockPos a, BlockPos b, int range) {
+        return Math.abs(a.getX() - b.getX()) + Math.abs(a.getY() - b.getY()) + Math.abs(a.getZ() - b.getZ()) <= range;
     }
 
 
@@ -126,11 +142,10 @@ public abstract class PlayerDepthPenalties {
         //  yLevel <= -100 Handled in PlayerSleepInBed event
         if (yLevel <= -150) {belowMinus150DepthPenalty(player);}
         if (yLevel <= -200) {belowMinus200DepthPenalty(player);}
-
         //  yLevel <= -250 Handled in CropGrow event and EntityHealed event
-
+        //  yLevel <= -300 Handled in MineBlock event
         if (yLevel <= -350) {belowMinus350DepthPenalty(player);}
-
+        if (yLevel <= -400) {belowMinus400DepthPenalty(player);}
         if (yLevel <= -450) {belowMinus450DepthPenalty(player);}
         if (yLevel <= -500) {belowMinus500DepthPenalty(player);}
 
@@ -138,12 +153,17 @@ public abstract class PlayerDepthPenalties {
 
 
     private static void anyHeightPenalty(Player player) {
-        if (((ServerPlayer)player).getStats().getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)) >= 48000) {
+        ServerPlayer serverPlayer = (ServerPlayer)player;
+        if (serverPlayer.getStats().getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)) >= 48000) {
             //If player not fatigued
             if (!player.hasEffect(MobEffects.DIG_SLOWDOWN)) {
                 player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 200, 2));
             }
         }
+
+        serverPlayer.getCapability(PlayerSanityProvider.PLAYER_SANITY).ifPresent(sanity -> {
+            SanityPunishments.InflictInsanityPunishments(serverPlayer, sanity.getSanity());
+        });
     }
 
 
@@ -163,7 +183,13 @@ public abstract class PlayerDepthPenalties {
             player.getCapability(PlayerSanityProvider.PLAYER_SANITY).ifPresent(sanity -> {
                 if (lightLevel <= 0) {
                     if (sanity.getSanity() > 0 && player.getRandom().nextFloat() < 0.1f) {
-                        sanity.removeSanity(1);
+                        //If fatigued, lose more
+                        if (((ServerPlayer)player).getStats().getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)) >= 48000) {
+                            sanity.removeSanity(3);
+                        }
+                        else {
+                            sanity.removeSanity(1);
+                        }
                         ModMessages.sendToPlayer(new SanityDataSyncS2CPacket(sanity.getSanity()), (ServerPlayer)player);
                     }
                 }
@@ -236,18 +262,47 @@ public abstract class PlayerDepthPenalties {
 
     }
     //-250
-    private static void belowMinus300DepthPenalty(Player player) {
-
-    }
-
+    //-300
     private static void belowMinus350DepthPenalty(Player player) {
         if (!isPlayerWearingAllTrimmedArmorOfMaterialType(player, "minecraft:copper", "minecraft:netherite")) {
             player.hurt(player.level().damageSources().cramming(), 0.5f);
         }
     }
-
-
     private static void belowMinus400DepthPenalty(Player player) {
+        if (player.getRandom().nextFloat() <= 0.001f) {
+            ServerLevel level = (ServerLevel)player.level();
+            RandomSource rand = player.getRandom();
+            //Spawn blazes near player
+            double d0 = player.getX();
+            double d1 = player.getY();
+            double d2 = player.getZ();
+
+            for (int i = 0; i < 64; i++) {
+                //Get a random block
+                double d3 = rand.nextInt(0, 20);
+                double d4 = rand.nextInt(0, 10);
+                double d5 = rand.nextInt(0, 20);
+                if (rand.nextFloat() <= 0.5f) {d3 = -d3;}
+                if (rand.nextFloat() <= 0.5f) {d4 = -d4;}
+                if (rand.nextFloat() <= 0.5f) {d5 = -d5;}
+
+                double d6 = (d0 + d3);
+                double d7 = (d1 + d4);
+                double d8 = (d2 + d5);
+
+
+                BlockPos blockPos = new BlockPos((int)d6, (int)d7, (int)d8);
+                BlockPos topPos = new BlockPos((int)d6, (int)d7 + 1, (int)d8);
+                //If both blocks are air, spawn the blaze (with some fanfare)
+                if (level.getBlockState(blockPos) == Blocks.AIR.defaultBlockState() && level.getBlockState(topPos) == Blocks.AIR.defaultBlockState() && !isBlockPosWithinRange(blockPos, player.blockPosition(), 5)) {
+                    EntityType.BLAZE.spawn(level, blockPos, MobSpawnType.EVENT);
+                    level.sendParticles(ParticleTypes.EXPLOSION, d6, d7, d8, 5, 0d, 0d, 0d, 0d);
+                    level.sendParticles(ParticleTypes.EXPLOSION, d6, d7 + 1, d8, 5, 0d, 0d, 0d, 0d);
+                    level.playSeededSound(null, d6, d7, d7, SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 1f,1f,0);
+                }
+
+            }
+        }
 
     }
 
