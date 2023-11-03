@@ -83,19 +83,17 @@ public class DeepslateGolemEntity extends Monster {
 
 
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.SILVERFISH_AMBIENT;
+        return SoundEvents.FIRE_AMBIENT;
     }
 
-    protected SoundEvent getHurtSound(DamageSource pDamageSource) {
-        return SoundEvents.SILVERFISH_HURT;
-    }
+    protected SoundEvent getHurtSound(DamageSource pDamageSource) {return SoundEvents.DEEPSLATE_HIT;}
 
     protected SoundEvent getDeathSound() {
-        return SoundEvents.SILVERFISH_DEATH;
+        return SoundEvents.DEEPSLATE_BREAK;
     }
 
     protected void playStepSound(BlockPos pPos, BlockState pBlock) {
-        this.playSound(SoundEvents.SILVERFISH_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.DEEPSLATE_STEP, 0.15F, 1.0F);
     }
 
 

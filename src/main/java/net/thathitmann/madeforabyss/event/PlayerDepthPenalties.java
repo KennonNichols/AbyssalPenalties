@@ -242,7 +242,7 @@ public abstract class PlayerDepthPenalties {
                 if (!player.hasEffect(MobEffects.WITHER)) {
                     //Inflict wither
                     player.sendSystemMessage(Component.literal("Toxic gas burns your lungs!").withStyle(ChatFormatting.RED).withStyle(ChatFormatting.BOLD));
-                    player.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 2));
+                    player.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1));
                 }
             }
         }
@@ -252,7 +252,7 @@ public abstract class PlayerDepthPenalties {
             if (!player.hasEffect(MobEffects.WITHER)) {
                 //Inflict wither
                 player.sendSystemMessage(Component.literal("Toxic gas burns your lungs!").withStyle(ChatFormatting.RED).withStyle(ChatFormatting.BOLD));
-                player.addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 2));
+                player.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 1));
             }
         }
 

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BDB",
+    "DBD",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:nether_brick"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "result": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  }
+}
