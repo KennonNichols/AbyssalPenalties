@@ -13,6 +13,7 @@ import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -24,6 +25,8 @@ import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.level.ChunkDataEvent;
+import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
@@ -106,6 +109,22 @@ public class ModEvents {
             }
         }
     }
+
+    @SubscribeEvent
+    public static void onChunkGenerated(ChunkEvent.Load event) {
+        if (event.isNewChunk()) {
+            ServerLevel level = (ServerLevel)event.getLevel();
+            ChunkAccess chunk = event.getChunk();
+
+            int x = chunk.getPos().x * 16;
+            int z = chunk.getPos().z * 16;
+
+            //chunk.addEntity();
+
+            //level.setBlock(new BlockPos(x, 80, z), Blocks.IRON_ORE.defaultBlockState(), 3);
+        }
+    }
+
 
 
 

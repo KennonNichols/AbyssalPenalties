@@ -1,0 +1,30 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#is_overworld",
+  "features": [
+    "madeforabyss:coal_ore_in_stone_placed",
+    "madeforabyss:copper_ore_in_stone_placed",
+    "madeforabyss:iron_ore_in_stone_placed",
+    "madeforabyss:lapis_ore_in_stone_placed",
+    "madeforabyss:redstone_ore_in_stone_placed",
+    "madeforabyss:gold_ore_in_deepslate_placed",
+    "madeforabyss:diamond_ore_in_deepslate_placed",
+    "madeforabyss:emerald_ore_in_deepslate_placed",
+    "madeforabyss:gold_ore_in_netherrack_placed",
+    "madeforabyss:glowstone_in_netherrack_placed",
+    "madeforabyss:quartz_ore_in_netherrack_placed",
+    "madeforabyss:debris_in_netherrack_placed",
+
+
+    "madeforabyss:second_bedrock_placed",
+    "madeforabyss:third_bedrock_placed",
+    "madeforabyss:fourth_bedrock_placed",
+    "madeforabyss:fifth_bedrock_placed",
+    "madeforabyss:sixth_bedrock_placed",
+    "madeforabyss:seventh_bedrock_placed",
+    "madeforabyss:eighth_bedrock_placed",
+    "madeforabyss:ninth_bedrock_placed",
+    "madeforabyss:tenth_bedrock_placed"
+  ],
+  "step": "underground_ores"
+}
