@@ -19,6 +19,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,9 +27,12 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.thathitmann.madeforabyss.Config;
 import net.thathitmann.madeforabyss.item.GasMask;
+import net.thathitmann.madeforabyss.item.ModItems;
 import net.thathitmann.madeforabyss.networking.ModMessages;
 import net.thathitmann.madeforabyss.networking.packet.SanityDataSyncS2CPacket;
 import net.thathitmann.madeforabyss.sanity.PlayerSanity;
@@ -123,6 +127,9 @@ public abstract class PlayerDepthPenalties {
         return null;
     }
 
+    private static Boolean isPlayerHoldingMemento(Player player) {
+        return (player.getInventory().contains(ModItems.MEMENTO.get().getDefaultInstance()));
+    }
 
     public static void applyDepthPenalties(Player player) {
         //isPlayerWearingAllTrimmedArmorOfMaterialType("minecraft:copper", player);
@@ -136,31 +143,58 @@ public abstract class PlayerDepthPenalties {
 
 
         if (yLevel >= 0   ) {above0DepthBoon(player);}
+
+
         //======================================================================
-        if (yLevel <= 0   ) {below0DepthPenalty(player);}
-        if (yLevel <= -50 ) {belowMinus50DepthPenalty(player);}
+        //Uh, oh. Shitty code D:
+
+        if (yLevel <= 0   ) {below0DepthPenalty(player);
+
+            if (yLevel <= -50 ) {belowMinus50DepthPenalty(player);
+
         //  yLevel <= -100 Handled in PlayerSleepInBed event
-        if (yLevel <= -150) {belowMinus150DepthPenalty(player);}
-        if (yLevel <= -200) {belowMinus200DepthPenalty(player);}
+
+                if (yLevel <= -150) {belowMinus150DepthPenalty(player);
+
+                    if (yLevel <= -200) {belowMinus200DepthPenalty(player);
+
         //  yLevel <= -250 Handled in CropGrow event and EntityHealed event
         //  yLevel <= -300 Handled in MineBlock event
-        if (yLevel <= -350) {belowMinus350DepthPenalty(player);}
-        if (yLevel <= -400) {belowMinus400DepthPenalty(player);}
-        if (yLevel <= -450) {belowMinus450DepthPenalty(player);}
-        if (yLevel <= -500) {belowMinus500DepthPenalty(player);}
 
+                        if (yLevel <= -350) {belowMinus350DepthPenalty(player);
+
+                            if (yLevel <= -400) {belowMinus400DepthPenalty(player);
+
+                                if (yLevel <= -450) {belowMinus450DepthPenalty(player);
+
+                                    if (yLevel <= -500) {belowMinus500DepthPenalty(player);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
     private static void anyHeightPenalty(Player player) {
         ServerPlayer serverPlayer = (ServerPlayer)player;
+
+        //Prevent player from rising
+        if (player.getY() <= Config.returnLimit && player.getY() > Config.returnLimit - 1 && serverPlayer.gameMode.isSurvival()) {
+            player.teleportRelative( 0, -1, 0);
+
+        }
+
+        //Sleep Deprivation
         if (serverPlayer.getStats().getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)) >= 48000) {
             //If player not fatigued
             if (!player.hasEffect(MobEffects.DIG_SLOWDOWN)) {
                 player.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 200, 2));
             }
         }
-
         serverPlayer.getCapability(PlayerSanityProvider.PLAYER_SANITY).ifPresent(sanity -> {
             SanityPunishments.InflictInsanityPunishments(serverPlayer, sanity.getSanity());
         });
@@ -178,30 +212,36 @@ public abstract class PlayerDepthPenalties {
 
     }
     private static void below0DepthPenalty(Player player) {
+
+
         BlockPos blockPos = player.blockPosition();
         int lightLevel = player.level().getRawBrightness(blockPos, 0);
-            player.getCapability(PlayerSanityProvider.PLAYER_SANITY).ifPresent(sanity -> {
-                if (lightLevel <= 0) {
-                    if (sanity.getSanity() > 0 && player.getRandom().nextFloat() < 0.1f) {
-                        //If fatigued, lose more
-                        if (((ServerPlayer)player).getStats().getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)) >= 48000) {
-                            sanity.removeSanity(3);
-                        }
-                        else {
-                            sanity.removeSanity(1);
-                        }
-                        ModMessages.sendToPlayer(new SanityDataSyncS2CPacket(sanity.getSanity()), (ServerPlayer)player);
-                    }
+        player.getCapability(PlayerSanityProvider.PLAYER_SANITY).ifPresent(sanity -> {
+            if (lightLevel <= 0) {
+
+                //Don't do anything if player has the momento
+                if (isPlayerHoldingMemento(player)) {
+                    return;
                 }
-                else if (lightLevel >= 8) {
-                    if (sanity.getSanity() < PlayerSanity.getMaxSanity() && player.getRandom().nextFloat() < 0.02f) {
-                        sanity.addSanity(1);
-                        ModMessages.sendToPlayer(new SanityDataSyncS2CPacket(sanity.getSanity()), (ServerPlayer)player);
+
+                if (sanity.getSanity() > 0 && player.getRandom().nextFloat() < 0.1f) {
+                    //If fatigued, lose more
+                    if (((ServerPlayer) player).getStats().getValue(Stats.CUSTOM.get(Stats.TIME_SINCE_REST)) >= 48000) {
+                        sanity.removeSanity(3);
+                    } else {
+                        sanity.removeSanity(1);
                     }
-                } else {
-                    sanity.setSanityModToNeutral();
+                    ModMessages.sendToPlayer(new SanityDataSyncS2CPacket(sanity.getSanity()), (ServerPlayer) player);
                 }
-            });
+            } else if (lightLevel >= 8) {
+                if (sanity.getSanity() < PlayerSanity.getMaxSanity() && player.getRandom().nextFloat() < 0.02f) {
+                    sanity.addSanity(1);
+                    ModMessages.sendToPlayer(new SanityDataSyncS2CPacket(sanity.getSanity()), (ServerPlayer) player);
+                }
+            } else {
+                sanity.setSanityModToNeutral();
+            }
+        });
     }
     private static void belowMinus50DepthPenalty(Player player) {
         if (player.getRandom().nextFloat() <= 0.001f) {
@@ -299,6 +339,8 @@ public abstract class PlayerDepthPenalties {
                     level.sendParticles(ParticleTypes.EXPLOSION, d6, d7, d8, 5, 0d, 0d, 0d, 0d);
                     level.sendParticles(ParticleTypes.EXPLOSION, d6, d7 + 1, d8, 5, 0d, 0d, 0d, 0d);
                     level.playSeededSound(null, d6, d7, d7, SoundEvents.BLAZE_SHOOT, SoundSource.HOSTILE, 1f,1f,0);
+
+                    break;
                 }
 
             }

@@ -67,20 +67,7 @@ public class MadeForAbyss
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-
-
         ModMessages.register();
-
-
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-
-        if (Config.logDirtBlock)
-            LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
-
-        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
     // Add the example block item to the building blocks tab
@@ -91,6 +78,7 @@ public class MadeForAbyss
         }
         else if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(ModItems.GAS_MASK);
+            event.accept(ModItems.MEMENTO);
         }
         else if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
             event.accept(ModItems.GOLEM_SPAWN_EGG);

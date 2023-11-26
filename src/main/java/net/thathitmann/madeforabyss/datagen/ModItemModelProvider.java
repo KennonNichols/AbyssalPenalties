@@ -24,6 +24,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
+        simpleItem(ModItems.MEMENTO);
         //simpleItem(ModItems.GOLEM_SPAWN_EGG);
     }
 }

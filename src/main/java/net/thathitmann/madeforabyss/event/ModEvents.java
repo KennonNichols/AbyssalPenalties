@@ -1,6 +1,7 @@
 package net.thathitmann.madeforabyss.event;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -15,10 +16,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
@@ -30,6 +33,7 @@ import net.minecraftforge.event.level.ChunkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import net.thathitmann.madeforabyss.Config;
 import net.thathitmann.madeforabyss.MadeForAbyss;
 import net.thathitmann.madeforabyss.MobNetherizingRegistry;
 import net.thathitmann.madeforabyss.entity.ModEntities;
@@ -48,8 +52,9 @@ public class ModEvents {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.side == LogicalSide.SERVER) {
-            Player player = event.player;
-            if (!player.isCreative()) {
+            ServerPlayer player = (ServerPlayer) event.player;
+            //Minecraft.getInstance().level.getMinBuildHeight()
+            if (player.gameMode.isSurvival()) {
                 PlayerDepthPenalties.applyDepthPenalties(player);
             }
         }
@@ -110,20 +115,17 @@ public class ModEvents {
         }
     }
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onChunkGenerated(ChunkEvent.Load event) {
         if (event.isNewChunk()) {
             ServerLevel level = (ServerLevel)event.getLevel();
             ChunkAccess chunk = event.getChunk();
-
             int x = chunk.getPos().x * 16;
             int z = chunk.getPos().z * 16;
-
             //chunk.addEntity();
-
             //level.setBlock(new BlockPos(x, 80, z), Blocks.IRON_ORE.defaultBlockState(), 3);
         }
-    }
+    }*/
 
 
 
@@ -181,6 +183,19 @@ public class ModEvents {
             }
         }
     }
+
+    //When teleporting
+    @SubscribeEvent
+    public static void onPlayerTeleport(EntityTeleportEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            //If we are below the limit, and target is above the limit
+            if (event.getPrevY() < Config.returnLimit && event.getTargetY() >= Config.returnLimit && !player.isCreative()) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+
 
 
 
